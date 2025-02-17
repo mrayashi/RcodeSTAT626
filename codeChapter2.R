@@ -99,6 +99,8 @@ theta <- 2
 n <- 1000  
 set.seed(2023)  
 visits <- rnbinom(n, mu=mu, size=theta)  
+
+visits <- rpois(n,mu)
 k <- 0:15  
 pmf <- dnbinom(k, mu=mu, size=theta)  
 var(visits)/mean(visits)
@@ -106,6 +108,7 @@ hist(visits, freq=FALSE, breaks=0:20,
      main = "Visits Until Conversion",
      xlab = "Website Visits")
 lines(k, pmf, col="red", type="h")
+
 qqplot(rpois(1000, mu), visits,
        main = "NB vs Poisson QQ-Plot")
 abline(0,1, col="red")
@@ -218,7 +221,23 @@ fit <- stan(file = "bernoulli_model.stan", data = stan_data,
             iter = 2000, chains = 4)
 print(fit)
 plot(fit)
+slotNames(fit)
 
+samples <- fit@sim$samples
+
+all_p_samples <- c(samples[[1]][[1]],samples[[2]][[1]],
+                   samples[[3]][[1]],samples[[4]][[1]])
+
+mean(all_p_samples)
+quantile(all_p_samples, c(0.025,0.25,.5,.75, 0.975))
+
+log_posterior<-function(p,y){
+    s<-sum(y)
+    n<-length(y)
+   (s+1)*log(p) + (n-s+1)*log(1-p)
+}
+samples[[1]][[2]][1]
+log_posterior(p = samples[[1]][[1]][1],y = y)
 # Example: Unknown Mean, Known Variance:
 
 y <- c(5.1, 5.5, 4.9, 5.3, 5.7)    

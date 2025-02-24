@@ -1,15 +1,20 @@
 data {
-    int<lower=0> N;          // Number of observations
-    real y[N];               // Data
+  int<lower=0> N;
+  real y[N];
 }
 
 parameters {
-    real mu;                 // Mean
-    real<lower=0> sigma2;    // Variance
+  real mu;
+  real<lower=0> sigma;
 }
 
 model {
-    mu ~ normal(5.0, sqrt(sigma2));   // Prior for mu
-    sigma2 ~ inv_gamma(2, 1);         // Prior for sigma2
-    y ~ normal(mu, sqrt(sigma2));     // Likelihood
+  // Non-informative prior for mu
+  mu ~ normal(0, 1000); // You may adjust this if you wish
+
+  // Weakly informative/non-informative Gamma prior for sigma
+  sigma ~ gamma(0.01, 0.01);
+
+  // Likelihood
+  y ~ normal(mu, sigma);
 }

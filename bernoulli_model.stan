@@ -1,4 +1,4 @@
-data {
+   data {
     int<lower=0> N;          // Number of trials
     int<lower=0, upper=1> y[N];  // Binary outcomes
 }
@@ -8,6 +8,6 @@ parameters {
 }
 
 model {
-    p ~ beta(1, 1);          // Uniform prior
+    p ~ beta(15, 5);          // Uniform prior
     y ~ bernoulli(p);        // Likelihood
 }
